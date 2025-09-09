@@ -1,14 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
-    @livewire('utils.server-status')
-</div>
-@endsection
-
-@extends('layouts.app')
-
-@section('content')
 <div class="container mx-auto py-6">
     <div class="mb-4">
         <h1 class="text-2xl font-bold">Server Utilities</h1>
