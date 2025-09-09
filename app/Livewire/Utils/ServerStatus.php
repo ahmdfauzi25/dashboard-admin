@@ -85,7 +85,8 @@ class ServerStatus extends Component
             ? (bool) (opcache_get_status(false)['opcache_enabled'] ?? false)
             : false;
 
-        $result['server_time'] = now()->toDateTimeString();
+        // pastikan timezone mengikuti konfigurasi app
+        $result['server_time'] = now()->setTimezone(config('app.timezone'))->toDateTimeString();
 
         // Memory usage (application, peak, PHP limit, and optional system memory)
         $result['memory'] = $this->getMemoryUsage();
