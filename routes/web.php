@@ -51,6 +51,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/utils/maintenance', function () {
         return view('utils.maintenance');
     })->name('utils.maintenance');
+
+    Route::get('/utils/sessions', function () {
+        return view('utils.sessions');
+    })->name('utils.sessions');
 });
 
 // Public maintenance page (preview)
