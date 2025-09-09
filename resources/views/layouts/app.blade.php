@@ -211,13 +211,13 @@
                             <span class="sidebar-text">Roles & Permissions</span>
                         </a>
                         <!-- Server Utilities -->
-                        <a href="{{ route('utils.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('utils.*') ? 'bg-white bg-opacity-20 text-white' : 'text-blue-100 hover:bg-white hover:bg-opacity-10 hover:text-white' }} transition-colors duration-200">
+                        <a href="{{ route('utils.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ (request()->routeIs('utils.index') || request()->routeIs('utils.maintenance')) ? 'bg-white bg-opacity-20 text-white' : 'text-blue-100 hover:bg-white hover:bg-opacity-10 hover:text-white' }} transition-colors duration-200">
                             <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3a.75.75 0 00-.75.75V6H6.75A.75.75 0 006 6.75v2.25H3.75a.75.75 0 00-.75.75v3a.75.75 0 00.75.75H6v2.25c0 .414.336.75.75.75H9v2.25c0 .414.336.75.75.75h3a.75.75 0 00.75-.75V18h2.25a.75.75 0 00.75-.75V15h2.25a.75.75 0 00.75-.75v-3a.75.75 0 00-.75-.75H18V6.75A.75.75 0 0017.25 6H15V3.75A.75.75 0 0014.25 3h-3z" />
                             </svg>
                             <span class="sidebar-text">Server Utilities</span>
                         </a>
-                        <a href="{{ route('utils.sessions') }}" class="group mt-1 flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('utils.sessions*') ? 'bg-white bg-opacity-20 text-white' : 'text-blue-100 hover:bg-white hover:bg-opacity-10 hover:text-white' }} transition-colors duration-200">
+                        <a href="{{ route('utils.sessions') }}" class="group mt-1 flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('utils.sessions') ? 'bg-white bg-opacity-20 text-white' : 'text-blue-100 hover:bg-white hover:bg-opacity-10 hover:text-white' }} transition-colors duration-200">
                             <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M5 11h14M5 19h14M5 11a2 2 0 012-2h10a2 2 0 012 2M5 19a2 2 0 002 2h10a2 2 0 002-2" />
                             </svg>
