@@ -147,6 +147,11 @@
         }
         body.sidebar-collapsed #sidebar .logout-icon {
             margin-right: 0 !important;
+            display: inline-block !important;
+            color: #ffffff !important;
+        }
+        body.sidebar-collapsed #sidebar button svg.logout-icon {
+            margin-right: 0 !important;
         }
     </style>
 </head>

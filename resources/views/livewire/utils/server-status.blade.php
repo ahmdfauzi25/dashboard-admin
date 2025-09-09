@@ -177,6 +177,34 @@
             </div>
         </div>
 
+        <!-- Realtime Charts (Grafana-like) -->
+        <div class="p-5 rounded-xl bg-white shadow-modern md:col-span-2 lg:col-span-3">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold">Realtime Charts</h2>
+                <span class="text-xs text-gray-500">Auto refresh tiap detik</span>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="rounded-lg border border-gray-100 p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Memory Usage %</span>
+                        <span class="text-xs text-gray-500">Limit: {{ $status['memory']['php_memory_limit_raw'] }}</span>
+                    </div>
+                    <div class="h-48" wire:ignore>
+                        <canvas id="chart-memory"></canvas>
+                    </div>
+                </div>
+                <div class="rounded-lg border border-gray-100 p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Disk Usage %</span>
+                        <span class="text-xs text-gray-500">Root</span>
+                    </div>
+                    <div class="h-48" wire:ignore>
+                        <canvas id="chart-disk"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="p-5 rounded-xl bg-white shadow-modern md:col-span-2 lg:col-span-3">
             <h2 class="font-semibold mb-3">Folder Permissions</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -190,3 +218,76 @@
         </div>
     </div>
 </div>
+
+<!-- Data push untuk grafik (dipanggil setiap render) -->
+<script>
+    window.dispatchEvent(new CustomEvent('server-stats', {
+        detail: {
+            t: Date.now(),
+            memoryPercent: {{ (int) ($status['memory']['app_usage_percent_of_limit'] ?? 0) }},
+            diskPercent: {{ (function () use ($status) { $free=(float)($status['disk_free']??0); $total=(float)($status['disk_total']??0); $used=$total>0?max(0,$total-$free):0; return $total>0? (int) round(($used/$total)*100):0; })() }}
+        }
+    }));
+</script>
+
+<!-- Inisialisasi Chart.js (sekali saja) -->
+<script>
+    (function initServerCharts(){
+        if (window.__serverChartsInitialized) return;
+        window.__serverChartsInitialized = true;
+
+        function ensureChartJs(cb){
+            if (window.Chart) { cb(); return; }
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+            s.onload = cb; document.head.appendChild(s);
+        }
+
+        ensureChartJs(function(){
+            const memCtx = document.getElementById('chart-memory');
+            const diskCtx = document.getElementById('chart-disk');
+
+            const commonOptions = {
+                responsive: true,
+                animation: false,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(148,163,184,0.15)' } },
+                    y: { min: 0, max: 100, ticks: { color: '#64748b', callback: v => v + '%' }, grid: { color: 'rgba(148,163,184,0.15)' } }
+                }
+            };
+
+            const makeChart = (ctx, color) => new Chart(ctx, {
+                type: 'line',
+                data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color + '33', fill: true, tension: 0.35, pointRadius: 0 }] },
+                options: commonOptions
+            });
+
+            const charts = {
+                mem: makeChart(memCtx, '#3b82f6'),
+                disk: makeChart(diskCtx, '#22c55e')
+            };
+
+            const MAX_POINTS = 60; // ~60 detik histori
+
+            function pushData(label, value, chart){
+                const t = new Date(label).toLocaleTimeString();
+                const ds = chart.data.datasets[0];
+                chart.data.labels.push(t);
+                ds.data.push(value);
+                if (ds.data.length > MAX_POINTS) {
+                    ds.data.shift();
+                    chart.data.labels.shift();
+                }
+                chart.update('none');
+            }
+
+            window.addEventListener('server-stats', function(e){
+                const d = e.detail || {};
+                pushData(d.t, d.memoryPercent ?? 0, charts.mem);
+                pushData(d.t, d.diskPercent ?? 0, charts.disk);
+            });
+        });
+    })();
+</script>
