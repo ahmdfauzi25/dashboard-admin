@@ -19,7 +19,7 @@ class LoginActivity extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Domains\User\User::class);
+        return $this->belongsTo(\App\Domains\User\Models\User::class);
     }
 }
 
