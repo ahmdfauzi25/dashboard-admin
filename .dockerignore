@@ -1,0 +1,24 @@
+# Umum
+.git
+.gitignore
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
+
+# Node / Frontend
+node_modules/
+public/hot
+public/build
+
+# Laravel
+vendor/
+storage/
+bootstrap/cache/
+public/storage/
+
+# IDE / tooling
+.vscode/
+.idea/
+
