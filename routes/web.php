@@ -2,11 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\PromoController;
 
+// Arahkan root ke halaman login
 Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('dashboard');
-    }
     return redirect()->route('login');
 });
 
@@ -38,9 +39,10 @@ Route::middleware(['auth'])->group(function () {
 
 Auth::routes();
 
+// Arahkan /home ke Vue SPA (publik) agar tidak masuk dashboard default
 Route::get('/home', function () {
-    return redirect()->route('dashboard');
-})->middleware(['auth'])->name('home');
+    return view('app');
+})->name('home');
 
 // Utils: Server status & maintenance manager
 Route::middleware(['auth'])->group(function () {
@@ -55,6 +57,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/utils/sessions', function () {
         return view('utils.sessions');
     })->name('utils.sessions');
+});
+
+// Admin: Produk & Akun
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::post('products', [ProductController::class, 'store'])->name('products.store');
+
+    Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index');
+    Route::post('accounts', [AccountController::class, 'store'])->name('accounts.store');
+
+    // Promos & Banners
+    Route::get('promos', [PromoController::class, 'index'])->name('promos.index');
+    Route::post('promos', [PromoController::class, 'store'])->name('promos.store');
 });
 
 // Public maintenance page (preview)

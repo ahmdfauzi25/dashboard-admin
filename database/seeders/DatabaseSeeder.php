@@ -16,8 +16,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RoleSeeder::class,
+            ProductSeeder::class,
+            AccountSeeder::class,
         ]);
-        
+
         // Create a super admin user manually
         $superAdmin = User::create([
             'name' => 'Super Admin',
@@ -26,13 +28,13 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
-        
+
         // Assign super admin role
         $superAdminRole = \App\Domains\Role\Models\Role::where('name', 'super-admin')->first();
         if ($superAdminRole) {
             $superAdmin->roles()->attach($superAdminRole->id);
         }
-        
+
         // Create a test user manually
         $testUser = User::create([
             'name' => 'Test User',
@@ -41,7 +43,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
-        
+
         // Assign user role
         $userRole = \App\Domains\Role\Models\Role::where('name', 'user')->first();
         if ($userRole) {
